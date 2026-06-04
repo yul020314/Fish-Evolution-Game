@@ -2,9 +2,6 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
-# Recommended: add any editor/OS/tool-specific ignore rules from the Global/ templates as needed.
-# See: https://github.com/github/gitignore/tree/main/Global
-#
 .utmp/
 /[Ll]ibrary/
 /[Tt]emp/
@@ -36,6 +33,11 @@
 
 # Visual Studio cache directory
 .vs/
+.idea/
+.utmp/
+
+# VSCode cache directory
+.vscode/
 
 # Gradle cache directory
 .gradle/
@@ -58,6 +60,7 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
+*.lscache
 
 # Unity3D generated meta files
 *.pidb.meta
@@ -104,3 +107,8 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Temporary auto-generated Android Assets
+/Assets/EcXR/Shaders
+
+*.blob
