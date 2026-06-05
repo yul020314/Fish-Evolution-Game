@@ -509,6 +509,65 @@ MonoBehaviour:
   _spawnCenter: {x: 0, y: 0}
   _spawnSize: {x: 20, y: 12}
   _poolRoot: {fileID: 2050000002}
+--- !u!1 &2070000001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2070000002}
+  - component: {fileID: 2070000003}
+  m_Layer: 0
+  m_Name: FishSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2070000002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2070000001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2070000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2070000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 013abec660424c35bc7be555b9ffeab5, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: ""
+  _fishPrefabReference:
+    m_AssetGUID: 2d142d91df994a3fb4c63416cc6c8eb5
+    m_SubObjectName: ""
+    m_SubObjectType: ""
+    m_SubObjectGUID: ""
+  _fishData:
+  - {fileID: 11400000, guid: 29db22a89c2f401b9b4c49b8fb8780a1, type: 2}
+  - {fileID: 11400000, guid: f1d37cf14b114359ab9d63bdd27c3d4a, type: 2}
+  - {fileID: 11400000, guid: 3f649780312e4dd4a1bda2850e5a103e, type: 2}
+  - {fileID: 11400000, guid: cf7ae40975ef4ffbbb400cdfda0af694, type: 2}
+  - {fileID: 11400000, guid: bfb1e2670854477a9e40d3b845d8136f, type: 2}
+  _spawnCount: 18
+  _spawnCenter: {x: 0, y: 0}
+  _spawnSize: {x: 24, y: 14}
+  _poolRoot: {fileID: 2070000002}
 --- !u!1 &2060000001
 GameObject:
   m_ObjectHideFlags: 0
@@ -566,4 +625,5 @@ SceneRoots:
   - {fileID: 771185376}
   - {fileID: 1973000002}
   - {fileID: 2050000002}
+  - {fileID: 2070000002}
   - {fileID: 2060000002}

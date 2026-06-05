@@ -40,7 +40,7 @@ namespace FishEvolution.Gameplay
 
         private void Start()
         {
-            LoadFoodPrefabAsync(GetCancellationTokenOnDestroy()).Forget();
+            LoadFoodPrefabAsync(destroyCancellationToken).Forget();
         }
 
         private void OnDestroy()
@@ -136,7 +136,7 @@ namespace FishEvolution.Gameplay
 
         private FoodDataSO GetRandomFoodData()
         {
-            var startIndex = Random.Range(0, GetFoodDataCount());
+            var startIndex = UnityEngine.Random.Range(0, GetFoodDataCount());
             for (var offset = 0; offset < GetFoodDataCount(); offset++)
             {
                 var index = (startIndex + offset) % GetFoodDataCount();
@@ -152,8 +152,8 @@ namespace FishEvolution.Gameplay
         private Vector3 GetRandomPosition()
         {
             var halfSize = _spawnSize * 0.5f;
-            var x = Random.Range(_spawnCenter.x - halfSize.x, _spawnCenter.x + halfSize.x);
-            var y = Random.Range(_spawnCenter.y - halfSize.y, _spawnCenter.y + halfSize.y);
+            var x = UnityEngine.Random.Range(_spawnCenter.x - halfSize.x, _spawnCenter.x + halfSize.x);
+            var y = UnityEngine.Random.Range(_spawnCenter.y - halfSize.y, _spawnCenter.y + halfSize.y);
             return new Vector3(x, y, 0f);
         }
 
