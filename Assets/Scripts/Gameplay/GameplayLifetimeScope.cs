@@ -5,6 +5,7 @@ using FishEvolution.Config;
 using FishEvolution.Map;
 using FishEvolution.Quest;
 using FishEvolution.Save;
+using FishEvolution.Shop;
 using FishEvolution.UI;
 using FishEvolution.VFX;
 using System;
@@ -25,6 +26,7 @@ namespace FishEvolution.Gameplay
         [UnityEngine.SerializeField] private Transform _vfxPoolRoot;
         [UnityEngine.SerializeField] private SkillDataSO[] _skillData = new SkillDataSO[0];
         [UnityEngine.SerializeField] private QuestDataSO[] _questData = new QuestDataSO[0];
+        [UnityEngine.SerializeField] private ShopItemDataSO[] _shopItems = new ShopItemDataSO[0];
         [UnityEngine.SerializeField] private string _saveFileName = "player_progress.json";
         [UnityEngine.SerializeField] private float _autoSaveInterval = 10f;
 
@@ -53,6 +55,9 @@ namespace FishEvolution.Gameplay
             builder.RegisterMessageBroker<QuestRewardClaimRequest>(options);
             builder.RegisterMessageBroker<RewardGrantRequest>(options);
             builder.RegisterMessageBroker<RewardGrantedEvent>(options);
+            builder.RegisterMessageBroker<ShopPurchaseRequest>(options);
+            builder.RegisterMessageBroker<ShopPurchaseCompletedEvent>(options);
+            builder.RegisterMessageBroker<ShopPurchaseFailedEvent>(options);
             builder.RegisterMessageBroker<EatRequest>(options);
             builder.RegisterMessageBroker<EatCompletedEvent>(options);
             builder.RegisterMessageBroker<SkillUseRequest>(options);
@@ -67,6 +72,10 @@ namespace FishEvolution.Gameplay
             RegisterAudio(builder);
             builder.RegisterInstance(new SkillCatalog(_skillData));
             builder.RegisterInstance(_questData);
+            builder.RegisterInstance(new ShopCatalog(_shopItems));
+            builder.Register<UnlockInventory>(Lifetime.Singleton);
+            builder.RegisterEntryPoint<ShopWallet>(Lifetime.Singleton)
+                .AsSelf();
             builder.Register<SpeedBuff>(Lifetime.Singleton);
             builder.Register<ShieldBuff>(Lifetime.Singleton);
             builder.Register<ExpBuff>(Lifetime.Singleton);
@@ -88,6 +97,7 @@ namespace FishEvolution.Gameplay
             builder.RegisterEntryPoint<SkillSystem>(Lifetime.Singleton);
             builder.RegisterEntryPoint<QuestManager>(Lifetime.Singleton);
             builder.RegisterEntryPoint<RewardSystem>(Lifetime.Singleton);
+            builder.RegisterEntryPoint<ShopManager>(Lifetime.Singleton);
             builder.RegisterEntryPoint<AutoSave>(Lifetime.Singleton);
         }
 
