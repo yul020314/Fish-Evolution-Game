@@ -2,8 +2,10 @@ using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using FishEvolution.AI;
+using FishEvolution.Combat;
 using FishEvolution.Config;
 using FishEvolution.Pool;
+using MessagePipe;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -23,11 +25,15 @@ namespace FishEvolution.Gameplay
         private FishPool _fishPool;
         private AsyncOperationHandle<GameObject> _fishPrefabHandle;
         private PlayerController _player;
+        private IPublisher<DamageRequest> _damagePublisher;
 
         [Inject]
-        public void Construct(PlayerController player)
+        public void Construct(
+            PlayerController player,
+            IPublisher<DamageRequest> damagePublisher)
         {
             _player = player;
+            _damagePublisher = damagePublisher;
         }
 
         private void Awake()
@@ -105,7 +111,26 @@ namespace FishEvolution.Gameplay
             fish.transform.position = GetRandomPosition();
             fish.transform.rotation = GetRandomRotation();
             fish.Initialize(GetRandomFishData());
+            InitializeCombat(fish);
             InitializeAI(fish);
+        }
+
+        private void InitializeCombat(FishController fish)
+        {
+            if (fish == null || fish.FishData == null)
+            {
+                return;
+            }
+
+            if (fish.TryGetComponent<HealthComponent>(out var health))
+            {
+                health.Initialize(fish.FishData.HP);
+            }
+
+            if (fish.TryGetComponent<AttackComponent>(out var attack))
+            {
+                attack.Initialize(fish.FishData.Attack, _damagePublisher);
+            }
         }
 
         private void InitializeAI(FishController fish)

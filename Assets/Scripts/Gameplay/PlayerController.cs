@@ -1,4 +1,5 @@
 using FishEvolution.Config;
+using FishEvolution.Combat;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -16,6 +17,7 @@ namespace FishEvolution.Gameplay
 
         private Vector2 _moveInput;
 
+        public FishDataSO FishData => _fishData;
         public Vector2 MoveInput => _moveInput;
 
         private void Awake()
@@ -25,6 +27,11 @@ namespace FishEvolution.Gameplay
             _rigidbody2D.freezeRotation = true;
             _rigidbody2D.linearVelocity = Vector2.zero;
             _collider2D.isTrigger = false;
+        }
+
+        private void Start()
+        {
+            InitializeCombat();
         }
 
         private void Reset()
@@ -79,6 +86,24 @@ namespace FishEvolution.Gameplay
             if (_collider2D == null)
             {
                 _collider2D = gameObject.AddComponent<CircleCollider2D>();
+            }
+        }
+
+        private void InitializeCombat()
+        {
+            if (_fishData == null)
+            {
+                return;
+            }
+
+            if (TryGetComponent<HealthComponent>(out var health))
+            {
+                health.Initialize(_fishData.HP);
+            }
+
+            if (TryGetComponent<AttackComponent>(out var attack))
+            {
+                attack.Initialize(_fishData.Attack);
             }
         }
     }

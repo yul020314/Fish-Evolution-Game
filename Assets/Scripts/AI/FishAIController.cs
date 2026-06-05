@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using FishEvolution.Combat;
 using FishEvolution.Gameplay;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ namespace FishEvolution.AI
     {
         [SerializeField] private FishController _fishController;
         [SerializeField] private Rigidbody2D _rigidbody2D;
+        [SerializeField] private AttackComponent _attackComponent;
         [SerializeField] private FishAISettings _settings = new FishAISettings();
 
         private FishAIContext _context;
@@ -98,6 +100,18 @@ namespace FishEvolution.AI
         public bool TryGetDirectionFromPlayer(out Vector2 direction)
         {
             return _perception.TryGetDirectionFromPlayer(out direction);
+        }
+
+        public bool TryAttackPlayer()
+        {
+            if (_attackComponent == null ||
+                _context.Player == null ||
+                !_context.Player.TryGetComponent<HealthComponent>(out var health))
+            {
+                return false;
+            }
+
+            return _attackComponent.TryAttack(health);
         }
 
         private async UniTaskVoid RunAIAsync(
@@ -193,6 +207,11 @@ namespace FishEvolution.AI
             if (_rigidbody2D == null)
             {
                 _rigidbody2D = GetComponent<Rigidbody2D>();
+            }
+
+            if (_attackComponent == null)
+            {
+                _attackComponent = GetComponent<AttackComponent>();
             }
         }
     }

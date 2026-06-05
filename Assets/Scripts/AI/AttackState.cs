@@ -17,6 +17,7 @@ namespace FishEvolution.AI
             }
 
             context.Controller.Stop();
+            context.Controller.TryAttackPlayer();
         }
 
         public void Exit(FishAIContext context)
