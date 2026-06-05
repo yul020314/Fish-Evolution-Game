@@ -1,3 +1,4 @@
+using FishEvolution.Audio;
 using FishEvolution.Combat;
 using FishEvolution.Config;
 using FishEvolution.Save;
@@ -13,6 +14,9 @@ namespace FishEvolution.Gameplay
     public sealed class GameplayLifetimeScope : LifetimeScope
     {
         [UnityEngine.SerializeField] private HudDisplayDataSO _hudDisplayData;
+        [UnityEngine.SerializeField] private AudioSettingsSO _audioSettings;
+        [UnityEngine.SerializeField] private AudioSource _bgmSource;
+        [UnityEngine.SerializeField] private AudioSource _sfxSource;
         [UnityEngine.SerializeField] private SkillDataSO[] _skillData = new SkillDataSO[0];
         [UnityEngine.SerializeField] private string _saveFileName = "player_progress.json";
         [UnityEngine.SerializeField] private float _autoSaveInterval = 10f;
@@ -35,9 +39,12 @@ namespace FishEvolution.Gameplay
             builder.RegisterMessageBroker<SkillUsedEvent>(options);
             builder.RegisterMessageBroker<BuffRequest>(options);
             builder.RegisterMessageBroker<BuffAppliedEvent>(options);
+            builder.RegisterMessageBroker<AudioVolumeRequest>(options);
+            builder.RegisterMessageBroker<AudioVolumeChangedEvent>(options);
 
             builder.Register<SizeCheck>(Lifetime.Singleton)
                 .WithParameter(1.1f);
+            RegisterAudio(builder);
             builder.RegisterInstance(new SkillCatalog(_skillData));
             builder.Register<SpeedBuff>(Lifetime.Singleton);
             builder.Register<ShieldBuff>(Lifetime.Singleton);
@@ -58,6 +65,34 @@ namespace FishEvolution.Gameplay
             builder.RegisterEntryPoint<BuffSystem>(Lifetime.Singleton);
             builder.RegisterEntryPoint<SkillSystem>(Lifetime.Singleton);
             builder.RegisterEntryPoint<AutoSave>(Lifetime.Singleton);
+        }
+
+        private void RegisterAudio(IContainerBuilder builder)
+        {
+            var settings = _audioSettings != null
+                ? _audioSettings.CreatePlaybackSettings()
+                : AudioPlaybackSettings.CreateDefault();
+            builder.RegisterInstance(settings);
+            builder.RegisterInstance(
+                new AudioMixerController(settings.VolumeSettings));
+            builder.RegisterInstance(
+                new AudioSourceBinding(
+                    GetAudioSource(ref _bgmSource),
+                    GetAudioSource(ref _sfxSource)));
+            builder.RegisterEntryPoint<AudioManager>(Lifetime.Singleton);
+        }
+
+        private AudioSource GetAudioSource(ref AudioSource audioSource)
+        {
+            if (audioSource != null)
+            {
+                return audioSource;
+            }
+
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+            audioSource.loop = false;
+            return audioSource;
         }
     }
 

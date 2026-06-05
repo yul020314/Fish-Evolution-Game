@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44dec9e7c5a54cb49227b6261c4cc8a8, type: 3}
+  m_Name: AudioSettings_Default
+  m_EditorClassIdentifier:
+  _bgmClip: {fileID: 0}
+  _eatSfx: {fileID: 0}
+  _levelUpSfx: {fileID: 0}
+  _skillSfx: {fileID: 0}
+  _bgmMixerGroup: {fileID: 0}
+  _sfxMixerGroup: {fileID: 0}
+  _masterVolume: 1
+  _bgmVolume: 0.75
+  _sfxVolume: 1
+  _playBgmOnStart: 1
