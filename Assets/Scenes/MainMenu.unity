@@ -618,6 +618,7 @@ MonoBehaviour:
   autoInjectGameObjects:
   - {fileID: 1973000001}
   - {fileID: 2050000001}
+  - {fileID: 2070000001}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

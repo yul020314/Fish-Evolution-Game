@@ -1,11 +1,13 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using FishEvolution.AI;
 using FishEvolution.Config;
 using FishEvolution.Pool;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using VContainer;
 
 namespace FishEvolution.Gameplay
 {
@@ -20,6 +22,13 @@ namespace FishEvolution.Gameplay
 
         private FishPool _fishPool;
         private AsyncOperationHandle<GameObject> _fishPrefabHandle;
+        private PlayerController _player;
+
+        [Inject]
+        public void Construct(PlayerController player)
+        {
+            _player = player;
+        }
 
         private void Awake()
         {
@@ -96,6 +105,18 @@ namespace FishEvolution.Gameplay
             fish.transform.position = GetRandomPosition();
             fish.transform.rotation = GetRandomRotation();
             fish.Initialize(GetRandomFishData());
+            InitializeAI(fish);
+        }
+
+        private void InitializeAI(FishController fish)
+        {
+            if (fish == null ||
+                !fish.TryGetComponent<FishAIController>(out var aiController))
+            {
+                return;
+            }
+
+            aiController.Initialize(_player, _spawnCenter, _spawnSize);
         }
 
         private FishDataSO GetRandomFishData()

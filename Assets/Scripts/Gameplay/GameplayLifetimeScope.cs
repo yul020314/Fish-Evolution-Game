@@ -9,6 +9,7 @@ namespace FishEvolution.Gameplay
         protected override void Configure(IContainerBuilder builder)
         {
             var options = builder.RegisterMessagePipe();
+            builder.RegisterComponentInHierarchy<PlayerController>();
             builder.RegisterMessageBroker<FoodConsumedEvent>(options);
             builder.RegisterMessageBroker<PlayerLevelUpEvent>(options);
         }
