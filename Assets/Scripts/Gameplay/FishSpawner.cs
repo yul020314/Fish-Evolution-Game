@@ -26,14 +26,20 @@ namespace FishEvolution.Gameplay
         private AsyncOperationHandle<GameObject> _fishPrefabHandle;
         private PlayerController _player;
         private IPublisher<DamageRequest> _damagePublisher;
+        private IPublisher<EatRequest> _eatPublisher;
+        private IDisposable _eatCompletedSubscription;
 
         [Inject]
         public void Construct(
             PlayerController player,
-            IPublisher<DamageRequest> damagePublisher)
+            IPublisher<DamageRequest> damagePublisher,
+            IPublisher<EatRequest> eatPublisher,
+            ISubscriber<EatCompletedEvent> eatCompletedSubscriber)
         {
             _player = player;
             _damagePublisher = damagePublisher;
+            _eatPublisher = eatPublisher;
+            SubscribeEatCompleted(eatCompletedSubscriber);
         }
 
         private void Awake()
@@ -51,6 +57,8 @@ namespace FishEvolution.Gameplay
 
         private void OnDestroy()
         {
+            _eatCompletedSubscription?.Dispose();
+            _eatCompletedSubscription = null;
             _fishPool?.Clear();
             ReleaseFishPrefabHandle();
         }
@@ -112,7 +120,39 @@ namespace FishEvolution.Gameplay
             fish.transform.rotation = GetRandomRotation();
             fish.Initialize(GetRandomFishData());
             InitializeCombat(fish);
+            InitializeCollision(fish);
             InitializeAI(fish);
+        }
+
+        public void ReleaseAndRespawn(FishController fish)
+        {
+            if (fish == null || _fishPool == null)
+            {
+                return;
+            }
+
+            _fishPool.Release(fish);
+            if (CanSpawn())
+            {
+                SpawnOne();
+            }
+        }
+
+        private void SubscribeEatCompleted(ISubscriber<EatCompletedEvent> subscriber)
+        {
+            _eatCompletedSubscription?.Dispose();
+            _eatCompletedSubscription = subscriber?.Subscribe(HandleEatCompleted);
+        }
+
+        private void HandleEatCompleted(EatCompletedEvent message)
+        {
+            if (message.Target == null ||
+                !message.Target.TryGetComponent<FishController>(out var fish))
+            {
+                return;
+            }
+
+            ReleaseAndRespawn(fish);
         }
 
         private void InitializeCombat(FishController fish)
@@ -131,6 +171,17 @@ namespace FishEvolution.Gameplay
             {
                 attack.Initialize(fish.FishData.Attack, _damagePublisher);
             }
+        }
+
+        private void InitializeCollision(FishController fish)
+        {
+            if (fish == null ||
+                !fish.TryGetComponent<CollisionSystem>(out var collisionSystem))
+            {
+                return;
+            }
+
+            collisionSystem.Initialize(_eatPublisher);
         }
 
         private void InitializeAI(FishController fish)
