@@ -682,6 +682,7 @@ MonoBehaviour:
   - {fileID: 1973000001}
   - {fileID: 2050000001}
   - {fileID: 2070000001}
+  _hudDisplayData: {fileID: 11400000, guid: 37120694fe274c7db4d00d59c78e2a93, type: 2}
 --- !u!1 &2070000001
 GameObject:
   m_ObjectHideFlags: 0

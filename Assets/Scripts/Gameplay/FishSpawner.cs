@@ -29,6 +29,9 @@ namespace FishEvolution.Gameplay
         private IPublisher<EatRequest> _eatPublisher;
         private IDisposable _eatCompletedSubscription;
 
+        public Vector2 SpawnCenter => _spawnCenter;
+        public Vector2 SpawnSize => _spawnSize;
+
         [Inject]
         public void Construct(
             PlayerController player,

@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8603bbb8718d4d75ac9cf903d2b9a003, type: 3}
+  m_Name: HudDisplay_Default
+  m_EditorClassIdentifier:
+  _fontName: Arial
+  _levelPrefix: "Lv "
+  _experiencePrefix: "EXP "
+  _goldPrefix: "Gold "
+  _skillPrefix: "Skill "
+  _mapPrefix: "Map "
+  _defaultMapName: Shallow Sea
+  _noneText: None
+  _initialGold: 0
+  _panelColor: {r: 0.04, g: 0.09, b: 0.12, a: 0.7}
+  _textColor: {r: 0.93, g: 0.98, b: 1, a: 1}
+  _barBackgroundColor: {r: 0.04, g: 0.12, b: 0.18, a: 0.85}
+  _barFillColor: {r: 0.22, g: 0.78, b: 0.88, a: 1}
+  _mapColor: {r: 0.04, g: 0.18, b: 0.22, a: 0.78}
+  _playerMarkerColor: {r: 1, g: 0.86, b: 0.24, a: 1}
