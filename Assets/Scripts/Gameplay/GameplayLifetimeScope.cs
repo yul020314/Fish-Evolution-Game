@@ -2,6 +2,7 @@ using FishEvolution.Audio;
 using FishEvolution.Boss;
 using FishEvolution.Combat;
 using FishEvolution.Config;
+using FishEvolution.Map;
 using FishEvolution.Save;
 using FishEvolution.UI;
 using FishEvolution.VFX;
@@ -32,6 +33,8 @@ namespace FishEvolution.Gameplay
             builder.RegisterComponentInHierarchy<PlayerGrowthController>();
             builder.RegisterComponentInHierarchy<FishSpawner>();
             builder.RegisterComponentInHierarchy<BossController>();
+            builder.RegisterComponentInHierarchy<MapManager>();
+            builder.RegisterComponentInHierarchy<FogSystem>();
             builder.RegisterMessageBroker<FoodConsumedEvent>(options);
             builder.RegisterMessageBroker<PlayerLevelUpEvent>(options);
             builder.RegisterMessageBroker<PlayerProgressChangedEvent>(options);
@@ -39,6 +42,10 @@ namespace FishEvolution.Gameplay
             builder.RegisterMessageBroker<DamageAppliedEvent>(options);
             builder.RegisterMessageBroker<EntityDeathEvent>(options);
             builder.RegisterMessageBroker<BossDeadEvent>(options);
+            builder.RegisterMessageBroker<MapChangeRequest>(options);
+            builder.RegisterMessageBroker<MapChangedEvent>(options);
+            builder.RegisterMessageBroker<MapUnlockedEvent>(options);
+            builder.RegisterMessageBroker<MapLockedEvent>(options);
             builder.RegisterMessageBroker<EatRequest>(options);
             builder.RegisterMessageBroker<EatCompletedEvent>(options);
             builder.RegisterMessageBroker<SkillUseRequest>(options);
