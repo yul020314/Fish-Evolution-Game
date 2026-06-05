@@ -3,6 +3,7 @@ using FishEvolution.Boss;
 using FishEvolution.Combat;
 using FishEvolution.Config;
 using FishEvolution.Map;
+using FishEvolution.Quest;
 using FishEvolution.Save;
 using FishEvolution.UI;
 using FishEvolution.VFX;
@@ -23,6 +24,7 @@ namespace FishEvolution.Gameplay
         [UnityEngine.SerializeField] private AudioSource _sfxSource;
         [UnityEngine.SerializeField] private Transform _vfxPoolRoot;
         [UnityEngine.SerializeField] private SkillDataSO[] _skillData = new SkillDataSO[0];
+        [UnityEngine.SerializeField] private QuestDataSO[] _questData = new QuestDataSO[0];
         [UnityEngine.SerializeField] private string _saveFileName = "player_progress.json";
         [UnityEngine.SerializeField] private float _autoSaveInterval = 10f;
 
@@ -46,6 +48,11 @@ namespace FishEvolution.Gameplay
             builder.RegisterMessageBroker<MapChangedEvent>(options);
             builder.RegisterMessageBroker<MapUnlockedEvent>(options);
             builder.RegisterMessageBroker<MapLockedEvent>(options);
+            builder.RegisterMessageBroker<QuestProgressChangedEvent>(options);
+            builder.RegisterMessageBroker<QuestCompletedEvent>(options);
+            builder.RegisterMessageBroker<QuestRewardClaimRequest>(options);
+            builder.RegisterMessageBroker<RewardGrantRequest>(options);
+            builder.RegisterMessageBroker<RewardGrantedEvent>(options);
             builder.RegisterMessageBroker<EatRequest>(options);
             builder.RegisterMessageBroker<EatCompletedEvent>(options);
             builder.RegisterMessageBroker<SkillUseRequest>(options);
@@ -59,6 +66,7 @@ namespace FishEvolution.Gameplay
                 .WithParameter(1.1f);
             RegisterAudio(builder);
             builder.RegisterInstance(new SkillCatalog(_skillData));
+            builder.RegisterInstance(_questData);
             builder.Register<SpeedBuff>(Lifetime.Singleton);
             builder.Register<ShieldBuff>(Lifetime.Singleton);
             builder.Register<ExpBuff>(Lifetime.Singleton);
@@ -78,6 +86,8 @@ namespace FishEvolution.Gameplay
             builder.RegisterEntryPoint<EatSystem>(Lifetime.Singleton);
             builder.RegisterEntryPoint<BuffSystem>(Lifetime.Singleton);
             builder.RegisterEntryPoint<SkillSystem>(Lifetime.Singleton);
+            builder.RegisterEntryPoint<QuestManager>(Lifetime.Singleton);
+            builder.RegisterEntryPoint<RewardSystem>(Lifetime.Singleton);
             builder.RegisterEntryPoint<AutoSave>(Lifetime.Singleton);
         }
 
