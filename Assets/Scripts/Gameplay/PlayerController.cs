@@ -105,6 +105,18 @@ namespace FishEvolution.Gameplay
             Move(_moveInput);
         }
 
+        public void RestorePosition(Vector3 position)
+        {
+            if (_rigidbody2D != null)
+            {
+                _rigidbody2D.position = position;
+                _rigidbody2D.linearVelocity = Vector2.zero;
+                return;
+            }
+
+            transform.position = position;
+        }
+
         private void Move(Vector2 direction)
         {
             var speed = _fishData != null ? _fishData.Speed : 0f;

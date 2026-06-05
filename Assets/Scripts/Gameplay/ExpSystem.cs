@@ -18,6 +18,11 @@ namespace FishEvolution.Gameplay
             _currentExperience = Mathf.Max(0, _currentExperience + amount);
         }
 
+        public void SetExperience(int amount)
+        {
+            _currentExperience = Mathf.Max(0, amount);
+        }
+
         public bool ConsumeExperience(int amount)
         {
             if (amount <= 0 || _currentExperience < amount)

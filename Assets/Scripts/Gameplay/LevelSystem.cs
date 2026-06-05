@@ -25,6 +25,11 @@ namespace FishEvolution.Gameplay
         public int MaxLevel => _maxLevel;
         public bool IsMaxLevel => _currentLevel >= _maxLevel;
 
+        public void SetLevel(int level)
+        {
+            _currentLevel = Mathf.Clamp(level, 1, _maxLevel);
+        }
+
         public int GetRequiredExperience()
         {
             if (IsMaxLevel)

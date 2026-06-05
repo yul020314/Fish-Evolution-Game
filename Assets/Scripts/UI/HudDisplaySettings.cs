@@ -93,11 +93,13 @@ namespace FishEvolution.UI
         private readonly FishSpawner _fishSpawner;
         private readonly ISubscriber<FoodConsumedEvent> _foodConsumedSubscriber;
         private readonly ISubscriber<PlayerLevelUpEvent> _levelUpSubscriber;
+        private readonly ISubscriber<PlayerProgressChangedEvent> _progressChangedSubscriber;
 
         private GameplayHudBinding _binding;
         private HudTextFormatter _formatter;
         private IDisposable _foodConsumedSubscription;
         private IDisposable _levelUpSubscription;
+        private IDisposable _progressChangedSubscription;
         private bool _isHudDirty;
 
         public GameplayHudController(
@@ -106,7 +108,8 @@ namespace FishEvolution.UI
             PlayerGrowthController growth,
             FishSpawner fishSpawner,
             ISubscriber<FoodConsumedEvent> foodConsumedSubscriber,
-            ISubscriber<PlayerLevelUpEvent> levelUpSubscriber)
+            ISubscriber<PlayerLevelUpEvent> levelUpSubscriber,
+            ISubscriber<PlayerProgressChangedEvent> progressChangedSubscriber)
         {
             _settings = settings;
             _player = player;
@@ -114,6 +117,7 @@ namespace FishEvolution.UI
             _fishSpawner = fishSpawner;
             _foodConsumedSubscriber = foodConsumedSubscriber;
             _levelUpSubscriber = levelUpSubscriber;
+            _progressChangedSubscriber = progressChangedSubscriber;
         }
 
         public void Start()
@@ -139,8 +143,10 @@ namespace FishEvolution.UI
         {
             _foodConsumedSubscription?.Dispose();
             _levelUpSubscription?.Dispose();
+            _progressChangedSubscription?.Dispose();
             _foodConsumedSubscription = null;
             _levelUpSubscription = null;
+            _progressChangedSubscription = null;
             DestroyHud();
         }
 
@@ -148,6 +154,8 @@ namespace FishEvolution.UI
         {
             _foodConsumedSubscription = _foodConsumedSubscriber.Subscribe(HandleFoodConsumed);
             _levelUpSubscription = _levelUpSubscriber.Subscribe(HandleLevelUp);
+            _progressChangedSubscription = _progressChangedSubscriber.Subscribe(
+                HandleProgressChanged);
         }
 
         private void HandleFoodConsumed(FoodConsumedEvent message)
@@ -159,6 +167,14 @@ namespace FishEvolution.UI
         }
 
         private void HandleLevelUp(PlayerLevelUpEvent message)
+        {
+            if (message.Player == _player)
+            {
+                _isHudDirty = true;
+            }
+        }
+
+        private void HandleProgressChanged(PlayerProgressChangedEvent message)
         {
             if (message.Player == _player)
             {

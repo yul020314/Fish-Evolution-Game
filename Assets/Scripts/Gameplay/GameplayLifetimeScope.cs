@@ -1,5 +1,6 @@
 using FishEvolution.Combat;
 using FishEvolution.Config;
+using FishEvolution.Save;
 using FishEvolution.UI;
 using System;
 using MessagePipe;
@@ -13,6 +14,8 @@ namespace FishEvolution.Gameplay
     {
         [UnityEngine.SerializeField] private HudDisplayDataSO _hudDisplayData;
         [UnityEngine.SerializeField] private SkillDataSO[] _skillData = new SkillDataSO[0];
+        [UnityEngine.SerializeField] private string _saveFileName = "player_progress.json";
+        [UnityEngine.SerializeField] private float _autoSaveInterval = 10f;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -22,6 +25,7 @@ namespace FishEvolution.Gameplay
             builder.RegisterComponentInHierarchy<FishSpawner>();
             builder.RegisterMessageBroker<FoodConsumedEvent>(options);
             builder.RegisterMessageBroker<PlayerLevelUpEvent>(options);
+            builder.RegisterMessageBroker<PlayerProgressChangedEvent>(options);
             builder.RegisterMessageBroker<DamageRequest>(options);
             builder.RegisterMessageBroker<DamageAppliedEvent>(options);
             builder.RegisterMessageBroker<EntityDeathEvent>(options);
@@ -39,6 +43,9 @@ namespace FishEvolution.Gameplay
             builder.Register<ShieldBuff>(Lifetime.Singleton);
             builder.Register<ExpBuff>(Lifetime.Singleton);
             builder.Register<BuffManager>(Lifetime.Singleton);
+            builder.RegisterInstance(new SaveSettings(_saveFileName, _autoSaveInterval));
+            builder.Register<JsonSave>(Lifetime.Singleton);
+            builder.Register<SaveManager>(Lifetime.Singleton);
             if (_hudDisplayData != null)
             {
                 builder.RegisterInstance(HudDisplaySettings.FromData(_hudDisplayData));
@@ -50,6 +57,7 @@ namespace FishEvolution.Gameplay
             builder.RegisterEntryPoint<EatSystem>(Lifetime.Singleton);
             builder.RegisterEntryPoint<BuffSystem>(Lifetime.Singleton);
             builder.RegisterEntryPoint<SkillSystem>(Lifetime.Singleton);
+            builder.RegisterEntryPoint<AutoSave>(Lifetime.Singleton);
         }
     }
 

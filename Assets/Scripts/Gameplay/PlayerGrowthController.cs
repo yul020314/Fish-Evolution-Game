@@ -29,6 +29,7 @@ namespace FishEvolution.Gameplay
         private GrowthSystem _growthSystem;
         private PlayerController _playerController;
         private IPublisher<PlayerLevelUpEvent> _levelUpPublisher;
+        private IPublisher<PlayerProgressChangedEvent> _progressChangedPublisher;
         private BuffManager _buffManager;
         private IDisposable _foodConsumedSubscription;
 
@@ -43,9 +44,11 @@ namespace FishEvolution.Gameplay
         public void Construct(
             ISubscriber<FoodConsumedEvent> foodConsumedSubscriber,
             IPublisher<PlayerLevelUpEvent> levelUpPublisher,
+            IPublisher<PlayerProgressChangedEvent> progressChangedPublisher,
             BuffManager buffManager)
         {
             _levelUpPublisher = levelUpPublisher;
+            _progressChangedPublisher = progressChangedPublisher;
             _buffManager = buffManager;
             _foodConsumedSubscription = foodConsumedSubscriber.Subscribe(HandleFoodConsumed);
         }
@@ -78,6 +81,21 @@ namespace FishEvolution.Gameplay
 
             _expSystem.AddExperience(amount);
             ProcessLevelUps();
+        }
+
+        public void RestoreProgress(
+            int level,
+            int experience)
+        {
+            if (_expSystem == null || _levelSystem == null)
+            {
+                InitializeSystems();
+            }
+
+            _levelSystem.SetLevel(level);
+            _expSystem.SetExperience(experience);
+            ApplyGrowth();
+            PublishProgressChanged();
         }
 
         private void InitializeSystems()
@@ -169,6 +187,17 @@ namespace FishEvolution.Gameplay
 
             _levelUpPublisher.Publish(
                 new PlayerLevelUpEvent(_playerController, previousLevel, CurrentLevel));
+        }
+
+        private void PublishProgressChanged()
+        {
+            if (_progressChangedPublisher == null)
+            {
+                return;
+            }
+
+            _progressChangedPublisher.Publish(
+                new PlayerProgressChangedEvent(_playerController));
         }
     }
 }

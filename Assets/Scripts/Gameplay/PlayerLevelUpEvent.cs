@@ -16,4 +16,14 @@ namespace FishEvolution.Gameplay
         public int PreviousLevel { get; }
         public int CurrentLevel { get; }
     }
+
+    public readonly struct PlayerProgressChangedEvent
+    {
+        public PlayerProgressChangedEvent(PlayerController player)
+        {
+            Player = player;
+        }
+
+        public PlayerController Player { get; }
+    }
 }
