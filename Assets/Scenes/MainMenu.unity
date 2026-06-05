@@ -251,6 +251,7 @@ GameObject:
   - component: {fileID: 1973000007}
   - component: {fileID: 1973000005}
   - component: {fileID: 1973000006}
+  - component: {fileID: 1973000008}
   m_Layer: 0
   m_Name: PlayerFish
   m_TagString: Untagged
@@ -421,6 +422,33 @@ MonoBehaviour:
   _fishData: {fileID: 11400000, guid: 29db22a89c2f401b9b4c49b8fb8780a1, type: 2}
   _rigidbody2D: {fileID: 1973000004}
   _collider2D: {fileID: 1973000007}
+--- !u!114 &1973000008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1973000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5aac0865eac44f8696a4e98630210689, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: ""
+  _initialLevel: 1
+  _maxLevel: 100
+  _experienceMultiplier: 100
+  _experiencePower: 1.5
+  _captureBaseScaleOnAwake: 1
+  _baseScale: {x: 0.8, y: 0.5, z: 1}
+  _baseHp: 100
+  _hpPerLevel: 25
+  _baseAttack: 10
+  _attackPerLevel: 5
+  _baseSpeed: 6
+  _speedPerLevel: 0.03
+  _minSpeed: 2
+  _scaleBase: 1
+  _scalePerLevel: 0.12
 --- !u!1 &2050000001
 GameObject:
   m_ObjectHideFlags: 0
@@ -481,6 +509,56 @@ MonoBehaviour:
   _spawnCenter: {x: 0, y: 0}
   _spawnSize: {x: 20, y: 12}
   _poolRoot: {fileID: 2050000002}
+--- !u!1 &2060000001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2060000002}
+  - component: {fileID: 2060000003}
+  m_Layer: 0
+  m_Name: GameplayScope
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2060000002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2060000001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2060000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2060000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71a31590687b438d983640241d98e45f, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: ""
+  parentReference:
+    TypeName: ""
+  autoRun: 1
+  autoInjectGameObjects:
+  - {fileID: 1973000001}
+  - {fileID: 2050000001}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -488,3 +566,4 @@ SceneRoots:
   - {fileID: 771185376}
   - {fileID: 1973000002}
   - {fileID: 2050000002}
+  - {fileID: 2060000002}

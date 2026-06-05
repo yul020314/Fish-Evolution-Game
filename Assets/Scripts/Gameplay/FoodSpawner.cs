@@ -3,9 +3,11 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using FishEvolution.Config;
 using FishEvolution.Pool;
+using MessagePipe;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using VContainer;
 
 namespace FishEvolution.Gameplay
 {
@@ -20,6 +22,13 @@ namespace FishEvolution.Gameplay
 
         private FoodPool _foodPool;
         private AsyncOperationHandle<GameObject> _foodPrefabHandle;
+        private IPublisher<FoodConsumedEvent> _foodConsumedPublisher;
+
+        [Inject]
+        public void Construct(IPublisher<FoodConsumedEvent> foodConsumedPublisher)
+        {
+            _foodConsumedPublisher = foodConsumedPublisher;
+        }
 
         private void Awake()
         {
@@ -101,12 +110,28 @@ namespace FishEvolution.Gameplay
             FoodController food,
             PlayerController player)
         {
+            PublishFoodConsumed(food, player);
             _foodPool.Release(food);
 
             if (CanSpawn())
             {
                 SpawnOne();
             }
+        }
+
+        private void PublishFoodConsumed(
+            FoodController food,
+            PlayerController player)
+        {
+            if (_foodConsumedPublisher == null ||
+                food == null ||
+                player == null ||
+                food.FoodData == null)
+            {
+                return;
+            }
+
+            _foodConsumedPublisher.Publish(new FoodConsumedEvent(food.FoodData, player));
         }
 
         private FoodDataSO GetRandomFoodData()
