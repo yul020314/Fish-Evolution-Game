@@ -16,7 +16,9 @@ MonoBehaviour:
   _skillName: Shield
   _skillType: 3
   _maxLevel: 1
-  _cooldown: 1
+  _cooldown: 6
   _cooldownGrowth: 0
-  _effectValue: 1
+  _effectValue: 0.6
   _effectGrowth: 0
+  _duration: 3
+  _range: 0

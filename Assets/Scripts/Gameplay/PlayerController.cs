@@ -1,7 +1,9 @@
 using FishEvolution.Config;
 using FishEvolution.Combat;
+using MessagePipe;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using VContainer;
 
 namespace FishEvolution.Gameplay
 {
@@ -16,9 +18,16 @@ namespace FishEvolution.Gameplay
         [SerializeField] private Collider2D _collider2D;
 
         private Vector2 _moveInput;
+        private IPublisher<SkillUseRequest> _skillUsePublisher;
 
         public FishDataSO FishData => _fishData;
         public Vector2 MoveInput => _moveInput;
+
+        [Inject]
+        public void Construct(IPublisher<SkillUseRequest> skillUsePublisher)
+        {
+            _skillUsePublisher = skillUsePublisher;
+        }
 
         private void Awake()
         {
@@ -52,6 +61,38 @@ namespace FishEvolution.Gameplay
             _moveInput = Vector2.ClampMagnitude(inputValue.Get<Vector2>(), 1f);
             Move(_moveInput);
             RotateTo(_moveInput);
+        }
+
+        public void OnSkill(InputValue inputValue)
+        {
+            if (!inputValue.isPressed || _skillUsePublisher == null)
+            {
+                return;
+            }
+
+            _skillUsePublisher.Publish(new SkillUseRequest(this));
+        }
+
+        public void Dash(float distance)
+        {
+            if (_rigidbody2D == null || distance <= 0f)
+            {
+                return;
+            }
+
+            var direction = GetSkillDirection();
+            _rigidbody2D.position += direction * distance;
+            RotateTo(direction);
+        }
+
+        public Vector2 GetSkillDirection()
+        {
+            if (_moveInput.sqrMagnitude > MinMoveMagnitudeSqr)
+            {
+                return _moveInput.normalized;
+            }
+
+            return transform.right;
         }
 
         private void Move(Vector2 direction)
@@ -107,4 +148,33 @@ namespace FishEvolution.Gameplay
             }
         }
     }
+
+    public readonly struct SkillUseRequest
+    {
+        public SkillUseRequest(PlayerController player)
+        {
+            Player = player;
+        }
+
+        public PlayerController Player { get; }
+        public bool IsValid => Player != null;
+    }
+
+    public readonly struct SkillUsedEvent
+    {
+        public SkillUsedEvent(
+            PlayerController player,
+            SkillType skillType,
+            float cooldown)
+        {
+            Player = player;
+            SkillType = skillType;
+            Cooldown = cooldown;
+        }
+
+        public PlayerController Player { get; }
+        public SkillType SkillType { get; }
+        public float Cooldown { get; }
+    }
+
 }

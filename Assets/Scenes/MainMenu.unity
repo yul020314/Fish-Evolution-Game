@@ -683,6 +683,11 @@ MonoBehaviour:
   - {fileID: 2050000001}
   - {fileID: 2070000001}
   _hudDisplayData: {fileID: 11400000, guid: 37120694fe274c7db4d00d59c78e2a93, type: 2}
+  _skillData:
+  - {fileID: 11400000, guid: 4355af7d9c544c03880afa7a19940303, type: 2}
+  - {fileID: 11400000, guid: 211dfaad052f4dfea4100fb288f45b42, type: 2}
+  - {fileID: 11400000, guid: fad25d3959344df1a5618f64a2495960, type: 2}
+  - {fileID: 11400000, guid: aa89d254514a4afcbe50e18cd5a854b3, type: 2}
 --- !u!1 &2070000001
 GameObject:
   m_ObjectHideFlags: 0

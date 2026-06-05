@@ -1,4 +1,5 @@
 using System;
+using FishEvolution.Gameplay;
 using MessagePipe;
 using VContainer.Unity;
 
@@ -9,17 +10,20 @@ namespace FishEvolution.Combat
         private readonly ISubscriber<DamageRequest> _damageSubscriber;
         private readonly IPublisher<DamageAppliedEvent> _damagePublisher;
         private readonly IPublisher<EntityDeathEvent> _deathPublisher;
+        private readonly PlayerSkillState _skillState;
 
         private IDisposable _damageSubscription;
 
         public DamageSystem(
             ISubscriber<DamageRequest> damageSubscriber,
             IPublisher<DamageAppliedEvent> damagePublisher,
-            IPublisher<EntityDeathEvent> deathPublisher)
+            IPublisher<EntityDeathEvent> deathPublisher,
+            PlayerSkillState skillState)
         {
             _damageSubscriber = damageSubscriber;
             _damagePublisher = damagePublisher;
             _deathPublisher = deathPublisher;
+            _skillState = skillState;
         }
 
         public void Start()
@@ -40,7 +44,10 @@ namespace FishEvolution.Combat
                 return;
             }
 
-            var appliedDamage = request.Target.ApplyDamage(request.Damage);
+            var damage = _skillState.GetDamageAfterShield(
+                request.Target,
+                request.Damage);
+            var appliedDamage = request.Target.ApplyDamage(damage);
             if (appliedDamage <= 0)
             {
                 return;

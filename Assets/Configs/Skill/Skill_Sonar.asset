@@ -16,7 +16,9 @@ MonoBehaviour:
   _skillName: Sonar
   _skillType: 2
   _maxLevel: 1
-  _cooldown: 1
+  _cooldown: 5
   _cooldownGrowth: 0
-  _effectValue: 1
+  _effectValue: 1.4
   _effectGrowth: 0
+  _duration: 0
+  _range: 5

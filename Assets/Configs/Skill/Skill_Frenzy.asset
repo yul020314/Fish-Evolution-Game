@@ -16,7 +16,9 @@ MonoBehaviour:
   _skillName: Frenzy
   _skillType: 4
   _maxLevel: 1
-  _cooldown: 1
+  _cooldown: 7
   _cooldownGrowth: 0
-  _effectValue: 1
+  _effectValue: 1.5
   _effectGrowth: 0
+  _duration: 4
+  _range: 0

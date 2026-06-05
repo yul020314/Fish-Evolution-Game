@@ -13,6 +13,8 @@ namespace FishEvolution.Config
         [SerializeField] private float _cooldownGrowth = -0.1f;
         [SerializeField] private float _effectValue = 1f;
         [SerializeField] private float _effectGrowth = 0.1f;
+        [SerializeField] private float _duration = 0f;
+        [SerializeField] private float _range = 0f;
 
         public string SkillId => _skillId;
         public string SkillName => _skillName;
@@ -22,5 +24,24 @@ namespace FishEvolution.Config
         public float CooldownGrowth => _cooldownGrowth;
         public float EffectValue => _effectValue;
         public float EffectGrowth => _effectGrowth;
+        public float Duration => _duration;
+        public float Range => _range;
+
+        public float GetCooldown(int level)
+        {
+            var value = _cooldown + _cooldownGrowth * GetGrowthStep(level);
+            return Mathf.Max(0.05f, value);
+        }
+
+        public float GetEffectValue(int level)
+        {
+            var value = _effectValue + _effectGrowth * GetGrowthStep(level);
+            return Mathf.Max(0f, value);
+        }
+
+        private int GetGrowthStep(int level)
+        {
+            return Mathf.Clamp(level, 1, Mathf.Max(1, _maxLevel)) - 1;
+        }
     }
 }

@@ -16,7 +16,9 @@ MonoBehaviour:
   _skillName: Dash
   _skillType: 1
   _maxLevel: 1
-  _cooldown: 1
+  _cooldown: 2
   _cooldownGrowth: 0
-  _effectValue: 1
+  _effectValue: 3.5
   _effectGrowth: 0
+  _duration: 0
+  _range: 0

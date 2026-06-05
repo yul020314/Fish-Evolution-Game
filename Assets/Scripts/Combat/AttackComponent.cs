@@ -14,8 +14,11 @@ namespace FishEvolution.Combat
         private IPublisher<DamageRequest> _damagePublisher;
         private HealthComponent _selfHealth;
         private float _nextAttackTime;
+        private float _damageMultiplier = 1f;
 
-        public int AttackDamage => Mathf.Max(0, _attackDamage);
+        public int AttackDamage => Mathf.Max(
+            0,
+            Mathf.RoundToInt(_attackDamage * _damageMultiplier));
         public float AttackCooldown => Mathf.Max(0.01f, _attackCooldown);
         public float AttackRange => Mathf.Max(0.01f, _attackRange);
 
@@ -33,6 +36,7 @@ namespace FishEvolution.Combat
         public void Initialize(int attackDamage)
         {
             _attackDamage = Mathf.Max(0, attackDamage);
+            _damageMultiplier = 1f;
             _nextAttackTime = 0f;
         }
 
@@ -55,6 +59,11 @@ namespace FishEvolution.Combat
             _damagePublisher.Publish(
                 new DamageRequest(gameObject, target, AttackDamage));
             return true;
+        }
+
+        public void SetDamageMultiplier(float multiplier)
+        {
+            _damageMultiplier = Mathf.Max(0.01f, multiplier);
         }
 
         public bool CanAttack(HealthComponent target)
