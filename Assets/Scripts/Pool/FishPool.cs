@@ -8,12 +8,24 @@ namespace FishEvolution.Pool
     {
         private readonly FishController _prefab;
         private readonly Transform _parent;
-        private readonly Stack<FishController> _inactiveFish = new Stack<FishController>();
+        private readonly Stack<FishController> _inactiveFish;
 
         public FishPool(FishController prefab, Transform parent)
         {
             _prefab = prefab;
             _parent = parent;
+            _inactiveFish = new Stack<FishController>();
+        }
+
+        public FishPool(
+            FishController prefab,
+            Transform parent,
+            int prewarmCapacity)
+        {
+            _prefab = prefab;
+            _parent = parent;
+            _inactiveFish = new Stack<FishController>(
+                Mathf.Max(0, prewarmCapacity));
         }
 
         public void Prewarm(int count)

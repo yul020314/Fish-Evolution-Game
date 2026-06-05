@@ -95,8 +95,9 @@ namespace FishEvolution.Gameplay
                 return;
             }
 
-            _foodPool = new FoodPool(foodPrefab, _poolRoot);
-            _foodPool.Prewarm(GetSpawnCount());
+            var spawnCount = GetSpawnCount();
+            _foodPool = new FoodPool(foodPrefab, _poolRoot, spawnCount);
+            _foodPool.Prewarm(spawnCount);
         }
 
         private void SpawnOne()

@@ -112,8 +112,9 @@ namespace FishEvolution.Gameplay
                 return;
             }
 
-            _fishPool = new FishPool(fishPrefab, _poolRoot);
-            _fishPool.Prewarm(GetSpawnCount());
+            var spawnCount = GetSpawnCount();
+            _fishPool = new FishPool(fishPrefab, _poolRoot, spawnCount);
+            _fishPool.Prewarm(spawnCount);
         }
 
         private void SpawnOne()
