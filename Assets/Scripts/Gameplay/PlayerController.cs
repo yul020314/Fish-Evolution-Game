@@ -19,14 +19,19 @@ namespace FishEvolution.Gameplay
 
         private Vector2 _moveInput;
         private IPublisher<SkillUseRequest> _skillUsePublisher;
+        private BuffManager _buffManager;
 
         public FishDataSO FishData => _fishData;
         public Vector2 MoveInput => _moveInput;
 
         [Inject]
-        public void Construct(IPublisher<SkillUseRequest> skillUsePublisher)
+        public void Construct(
+            IPublisher<SkillUseRequest> skillUsePublisher,
+            BuffManager buffManager)
         {
             _skillUsePublisher = skillUsePublisher;
+            _buffManager = buffManager;
+            _buffManager.RegisterPlayer(this);
         }
 
         private void Awake()
@@ -95,10 +100,25 @@ namespace FishEvolution.Gameplay
             return transform.right;
         }
 
+        public void RefreshMovement()
+        {
+            Move(_moveInput);
+        }
+
         private void Move(Vector2 direction)
         {
             var speed = _fishData != null ? _fishData.Speed : 0f;
-            _rigidbody2D.linearVelocity = direction * speed;
+            _rigidbody2D.linearVelocity = direction * GetMoveSpeed(speed);
+        }
+
+        private float GetMoveSpeed(float baseSpeed)
+        {
+            if (_buffManager == null)
+            {
+                return baseSpeed;
+            }
+
+            return baseSpeed * _buffManager.GetSpeedMultiplier(this);
         }
 
         private void RotateTo(Vector2 direction)

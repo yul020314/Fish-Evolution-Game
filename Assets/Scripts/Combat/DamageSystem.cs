@@ -10,7 +10,7 @@ namespace FishEvolution.Combat
         private readonly ISubscriber<DamageRequest> _damageSubscriber;
         private readonly IPublisher<DamageAppliedEvent> _damagePublisher;
         private readonly IPublisher<EntityDeathEvent> _deathPublisher;
-        private readonly PlayerSkillState _skillState;
+        private readonly BuffManager _buffManager;
 
         private IDisposable _damageSubscription;
 
@@ -18,12 +18,12 @@ namespace FishEvolution.Combat
             ISubscriber<DamageRequest> damageSubscriber,
             IPublisher<DamageAppliedEvent> damagePublisher,
             IPublisher<EntityDeathEvent> deathPublisher,
-            PlayerSkillState skillState)
+            BuffManager buffManager)
         {
             _damageSubscriber = damageSubscriber;
             _damagePublisher = damagePublisher;
             _deathPublisher = deathPublisher;
-            _skillState = skillState;
+            _buffManager = buffManager;
         }
 
         public void Start()
@@ -44,7 +44,7 @@ namespace FishEvolution.Combat
                 return;
             }
 
-            var damage = _skillState.GetDamageAfterShield(
+            var damage = _buffManager.GetDamageAfterShield(
                 request.Target,
                 request.Damage);
             var appliedDamage = request.Target.ApplyDamage(damage);

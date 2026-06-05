@@ -29,6 +29,7 @@ namespace FishEvolution.Gameplay
         private GrowthSystem _growthSystem;
         private PlayerController _playerController;
         private IPublisher<PlayerLevelUpEvent> _levelUpPublisher;
+        private BuffManager _buffManager;
         private IDisposable _foodConsumedSubscription;
 
         public int CurrentLevel => _levelSystem != null ? _levelSystem.CurrentLevel : _initialLevel;
@@ -41,9 +42,11 @@ namespace FishEvolution.Gameplay
         [Inject]
         public void Construct(
             ISubscriber<FoodConsumedEvent> foodConsumedSubscriber,
-            IPublisher<PlayerLevelUpEvent> levelUpPublisher)
+            IPublisher<PlayerLevelUpEvent> levelUpPublisher,
+            BuffManager buffManager)
         {
             _levelUpPublisher = levelUpPublisher;
+            _buffManager = buffManager;
             _foodConsumedSubscription = foodConsumedSubscriber.Subscribe(HandleFoodConsumed);
         }
 
@@ -146,7 +149,15 @@ namespace FishEvolution.Gameplay
                 return;
             }
 
-            AddExperience(message.Experience);
+            AddExperience(GetBuffedExperience(message.Experience));
+        }
+
+        private int GetBuffedExperience(int experience)
+        {
+            var multiplier = _buffManager != null
+                ? _buffManager.GetExperienceMultiplier(_playerController)
+                : 1f;
+            return Mathf.Max(0, Mathf.RoundToInt(experience * multiplier));
         }
 
         private void PublishLevelUp(int previousLevel)

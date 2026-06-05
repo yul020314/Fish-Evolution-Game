@@ -29,11 +29,16 @@ namespace FishEvolution.Gameplay
             builder.RegisterMessageBroker<EatCompletedEvent>(options);
             builder.RegisterMessageBroker<SkillUseRequest>(options);
             builder.RegisterMessageBroker<SkillUsedEvent>(options);
+            builder.RegisterMessageBroker<BuffRequest>(options);
+            builder.RegisterMessageBroker<BuffAppliedEvent>(options);
 
             builder.Register<SizeCheck>(Lifetime.Singleton)
                 .WithParameter(1.1f);
             builder.RegisterInstance(new SkillCatalog(_skillData));
-            builder.Register<PlayerSkillState>(Lifetime.Singleton);
+            builder.Register<SpeedBuff>(Lifetime.Singleton);
+            builder.Register<ShieldBuff>(Lifetime.Singleton);
+            builder.Register<ExpBuff>(Lifetime.Singleton);
+            builder.Register<BuffManager>(Lifetime.Singleton);
             if (_hudDisplayData != null)
             {
                 builder.RegisterInstance(HudDisplaySettings.FromData(_hudDisplayData));
@@ -43,6 +48,7 @@ namespace FishEvolution.Gameplay
             builder.RegisterEntryPoint<DamageSystem>(Lifetime.Singleton);
             builder.RegisterEntryPoint<DeathSystem>(Lifetime.Singleton);
             builder.RegisterEntryPoint<EatSystem>(Lifetime.Singleton);
+            builder.RegisterEntryPoint<BuffSystem>(Lifetime.Singleton);
             builder.RegisterEntryPoint<SkillSystem>(Lifetime.Singleton);
         }
     }
@@ -74,109 +80,10 @@ namespace FishEvolution.Gameplay
         }
     }
 
-    public sealed class PlayerSkillState
-    {
-        private readonly PlayerController _player;
-        private HealthComponent _playerHealth;
-        private AttackComponent _playerAttack;
-        private float _shieldExpiresAt;
-        private float _shieldReduction;
-        private float _frenzyExpiresAt;
-        private float _frenzyMultiplier = 1f;
-
-        public PlayerSkillState(PlayerController player)
-        {
-            _player = player;
-            CachePlayerComponents();
-        }
-
-        public void Tick(float time)
-        {
-            if (!IsFrenzyActive(time))
-            {
-                ResetFrenzy();
-            }
-        }
-
-        public void ActivateShield(
-            float reduction,
-            float duration,
-            float time)
-        {
-            _shieldReduction = Mathf.Clamp01(reduction);
-            _shieldExpiresAt = time + Mathf.Max(0f, duration);
-        }
-
-        public void ActivateFrenzy(
-            float multiplier,
-            float duration,
-            float time)
-        {
-            _frenzyMultiplier = Mathf.Max(1f, multiplier);
-            _frenzyExpiresAt = time + Mathf.Max(0f, duration);
-            _playerAttack?.SetDamageMultiplier(_frenzyMultiplier);
-        }
-
-        public int GetDamageAfterShield(
-            HealthComponent target,
-            int damage)
-        {
-            if (!CanShield(target, damage))
-            {
-                return damage;
-            }
-
-            var value = damage * (1f - _shieldReduction);
-            return Mathf.Max(1, Mathf.CeilToInt(value));
-        }
-
-        private bool CanShield(
-            HealthComponent target,
-            int damage)
-        {
-            return damage > 0 &&
-                target == _playerHealth &&
-                IsShieldActive(Time.time);
-        }
-
-        private bool IsShieldActive(float time)
-        {
-            return _shieldReduction > 0f && time < _shieldExpiresAt;
-        }
-
-        private bool IsFrenzyActive(float time)
-        {
-            return _frenzyMultiplier > 1f && time < _frenzyExpiresAt;
-        }
-
-        private void ResetFrenzy()
-        {
-            if (_frenzyMultiplier <= 1f)
-            {
-                return;
-            }
-
-            _frenzyMultiplier = 1f;
-            _playerAttack?.SetDamageMultiplier(1f);
-        }
-
-        private void CachePlayerComponents()
-        {
-            if (_player == null)
-            {
-                return;
-            }
-
-            _player.TryGetComponent(out _playerHealth);
-            _player.TryGetComponent(out _playerAttack);
-        }
-    }
-
     public sealed class SkillSystem : IStartable, ITickable, IDisposable
     {
         private readonly PlayerController _player;
         private readonly SkillCatalog _skillCatalog;
-        private readonly PlayerSkillState _skillState;
         private readonly ISubscriber<SkillUseRequest> _skillSubscriber;
         private readonly IPublisher<SkillUsedEvent> _skillUsedPublisher;
         private readonly ISkillEffect[] _effects;
@@ -186,17 +93,16 @@ namespace FishEvolution.Gameplay
         public SkillSystem(
             PlayerController player,
             SkillCatalog skillCatalog,
-            PlayerSkillState skillState,
             ISubscriber<SkillUseRequest> skillSubscriber,
             IPublisher<SkillUsedEvent> skillUsedPublisher,
-            IPublisher<DamageRequest> damagePublisher)
+            IPublisher<DamageRequest> damagePublisher,
+            IPublisher<BuffRequest> buffPublisher)
         {
             _player = player;
             _skillCatalog = skillCatalog;
-            _skillState = skillState;
             _skillSubscriber = skillSubscriber;
             _skillUsedPublisher = skillUsedPublisher;
-            _effects = CreateEffects(skillState, damagePublisher);
+            _effects = CreateEffects(damagePublisher, buffPublisher);
             _cooldowns = CreateCooldownSlots();
         }
 
@@ -207,7 +113,6 @@ namespace FishEvolution.Gameplay
 
         public void Tick()
         {
-            _skillState.Tick(Time.time);
         }
 
         public void Dispose()
@@ -304,15 +209,15 @@ namespace FishEvolution.Gameplay
         }
 
         private static ISkillEffect[] CreateEffects(
-            PlayerSkillState skillState,
-            IPublisher<DamageRequest> damagePublisher)
+            IPublisher<DamageRequest> damagePublisher,
+            IPublisher<BuffRequest> buffPublisher)
         {
             return new ISkillEffect[]
             {
                 new DashSkillEffect(),
                 new SonarSkillEffect(damagePublisher),
-                new ShieldSkillEffect(skillState),
-                new FrenzySkillEffect(skillState)
+                new ShieldSkillEffect(buffPublisher),
+                new FrenzySkillEffect(buffPublisher)
             };
         }
 
@@ -461,11 +366,11 @@ namespace FishEvolution.Gameplay
 
     public sealed class ShieldSkillEffect : ISkillEffect
     {
-        private readonly PlayerSkillState _skillState;
+        private readonly IPublisher<BuffRequest> _buffPublisher;
 
-        public ShieldSkillEffect(PlayerSkillState skillState)
+        public ShieldSkillEffect(IPublisher<BuffRequest> buffPublisher)
         {
-            _skillState = skillState;
+            _buffPublisher = buffPublisher;
         }
 
         public SkillType SkillType => SkillType.Shield;
@@ -480,21 +385,23 @@ namespace FishEvolution.Gameplay
                 return false;
             }
 
-            _skillState.ActivateShield(
-                skillData.GetEffectValue(level),
-                skillData.Duration,
-                Time.time);
+            _buffPublisher.Publish(
+                new BuffRequest(
+                    player,
+                    BuffType.Shield,
+                    skillData.GetEffectValue(level),
+                    skillData.Duration));
             return true;
         }
     }
 
     public sealed class FrenzySkillEffect : ISkillEffect
     {
-        private readonly PlayerSkillState _skillState;
+        private readonly IPublisher<BuffRequest> _buffPublisher;
 
-        public FrenzySkillEffect(PlayerSkillState skillState)
+        public FrenzySkillEffect(IPublisher<BuffRequest> buffPublisher)
         {
-            _skillState = skillState;
+            _buffPublisher = buffPublisher;
         }
 
         public SkillType SkillType => SkillType.Frenzy;
@@ -509,10 +416,12 @@ namespace FishEvolution.Gameplay
                 return false;
             }
 
-            _skillState.ActivateFrenzy(
-                skillData.GetEffectValue(level),
-                skillData.Duration,
-                Time.time);
+            _buffPublisher.Publish(
+                new BuffRequest(
+                    player,
+                    BuffType.Frenzy,
+                    skillData.GetEffectValue(level) - 1f,
+                    skillData.Duration));
             return true;
         }
     }
