@@ -14,7 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Fish
   m_GUID: cb75d5f439f25ef438ea8233577499e7
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 3e85b17d5b1741b1a009d4af2feb54b8
+    m_Address: Assets/Prefabs/Food/Food.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 4bdd9ef6c73675a458de8ac8160bafa9, type: 2}
   m_SchemaSet:

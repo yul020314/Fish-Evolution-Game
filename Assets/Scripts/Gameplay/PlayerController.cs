@@ -12,6 +12,7 @@ namespace FishEvolution.Gameplay
 
         [SerializeField] private FishDataSO _fishData = null;
         [SerializeField] private Rigidbody2D _rigidbody2D;
+        [SerializeField] private Collider2D _collider2D;
 
         private Vector2 _moveInput;
 
@@ -19,19 +20,16 @@ namespace FishEvolution.Gameplay
 
         private void Awake()
         {
-            if (_rigidbody2D == null)
-            {
-                _rigidbody2D = GetComponent<Rigidbody2D>();
-            }
-
+            CacheComponents();
             _rigidbody2D.gravityScale = 0f;
             _rigidbody2D.freezeRotation = true;
             _rigidbody2D.linearVelocity = Vector2.zero;
+            _collider2D.isTrigger = false;
         }
 
         private void Reset()
         {
-            _rigidbody2D = GetComponent<Rigidbody2D>();
+            CacheComponents();
         }
 
         private void OnDisable()
@@ -64,6 +62,24 @@ namespace FishEvolution.Gameplay
 
             var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0f, 0f, angle);
+        }
+
+        private void CacheComponents()
+        {
+            if (_rigidbody2D == null)
+            {
+                _rigidbody2D = GetComponent<Rigidbody2D>();
+            }
+
+            if (_collider2D == null)
+            {
+                _collider2D = GetComponent<Collider2D>();
+            }
+
+            if (_collider2D == null)
+            {
+                _collider2D = gameObject.AddComponent<CircleCollider2D>();
+            }
         }
     }
 }

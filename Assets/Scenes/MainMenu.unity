@@ -248,6 +248,7 @@ GameObject:
   - component: {fileID: 1973000002}
   - component: {fileID: 1973000003}
   - component: {fileID: 1973000004}
+  - component: {fileID: 1973000007}
   - component: {fileID: 1973000005}
   - component: {fileID: 1973000006}
   m_Layer: 0
@@ -348,6 +349,32 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!61 &1973000007
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1973000001}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!114 &1973000005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -393,9 +420,71 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fishData: {fileID: 11400000, guid: 29db22a89c2f401b9b4c49b8fb8780a1, type: 2}
   _rigidbody2D: {fileID: 1973000004}
+  _collider2D: {fileID: 1973000007}
+--- !u!1 &2050000001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2050000002}
+  - component: {fileID: 2050000003}
+  m_Layer: 0
+  m_Name: FoodSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2050000002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2050000001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2050000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2050000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65d9db62ad38430fa82518f489f4127f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _foodPrefabReference:
+    m_AssetGUID: 3e85b17d5b1741b1a009d4af2feb54b8
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+  _foodData:
+  - {fileID: 11400000, guid: c164113d4942461d820698a5fd6a36a1, type: 2}
+  - {fileID: 11400000, guid: 48477ca315eb484f96f0a4e7579ea6c4, type: 2}
+  - {fileID: 11400000, guid: f08f2516cdbd4d09a661b6191714f9d7, type: 2}
+  - {fileID: 11400000, guid: 14a15cdb101b42658b35ef50c1f04e13, type: 2}
+  - {fileID: 11400000, guid: 1c56cb44c02d4667b30f7ff649e2dbfa, type: 2}
+  - {fileID: 11400000, guid: 9be6bbfdabf14098aad0455e85cb4843, type: 2}
+  _spawnCount: 25
+  _spawnCenter: {x: 0, y: 0}
+  _spawnSize: {x: 20, y: 12}
+  _poolRoot: {fileID: 2050000002}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 771185376}
   - {fileID: 1973000002}
+  - {fileID: 2050000002}
