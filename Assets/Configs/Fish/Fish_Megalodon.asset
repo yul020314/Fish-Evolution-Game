@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bd16e971ac4b6e41a72ec58813509d8, type: 3}
+  m_Name: Fish_Megalodon
+  m_EditorClassIdentifier: 
+  _fishId: 005
+  _fishName: Megalodon
+  _rarity: 4
+  _hp: 2000
+  _attack: 120
+  _speed: 3
+  _scale: 1
+  _unlockCost: 50000
+  _skill: 5
