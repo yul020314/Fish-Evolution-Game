@@ -3,6 +3,7 @@ using FishEvolution.Combat;
 using FishEvolution.Config;
 using FishEvolution.Save;
 using FishEvolution.UI;
+using FishEvolution.VFX;
 using System;
 using MessagePipe;
 using UnityEngine;
@@ -15,8 +16,10 @@ namespace FishEvolution.Gameplay
     {
         [UnityEngine.SerializeField] private HudDisplayDataSO _hudDisplayData;
         [UnityEngine.SerializeField] private AudioSettingsSO _audioSettings;
+        [UnityEngine.SerializeField] private VFXSettingsSO _vfxSettings;
         [UnityEngine.SerializeField] private AudioSource _bgmSource;
         [UnityEngine.SerializeField] private AudioSource _sfxSource;
+        [UnityEngine.SerializeField] private Transform _vfxPoolRoot;
         [UnityEngine.SerializeField] private SkillDataSO[] _skillData = new SkillDataSO[0];
         [UnityEngine.SerializeField] private string _saveFileName = "player_progress.json";
         [UnityEngine.SerializeField] private float _autoSaveInterval = 10f;
@@ -59,6 +62,7 @@ namespace FishEvolution.Gameplay
                 builder.RegisterEntryPoint<GameplayHudController>(Lifetime.Singleton);
             }
 
+            RegisterVFX(builder);
             builder.RegisterEntryPoint<DamageSystem>(Lifetime.Singleton);
             builder.RegisterEntryPoint<DeathSystem>(Lifetime.Singleton);
             builder.RegisterEntryPoint<EatSystem>(Lifetime.Singleton);
@@ -80,6 +84,29 @@ namespace FishEvolution.Gameplay
                     GetAudioSource(ref _bgmSource),
                     GetAudioSource(ref _sfxSource)));
             builder.RegisterEntryPoint<AudioManager>(Lifetime.Singleton);
+        }
+
+        private void RegisterVFX(IContainerBuilder builder)
+        {
+            var settings = _vfxSettings != null
+                ? _vfxSettings.CreatePlaybackSettings()
+                : new VFXPlaybackSettings(new VFXCue[0]);
+            builder.RegisterInstance(settings);
+            builder.RegisterInstance(new VFXPoolRoot(GetVFXPoolRoot()));
+            builder.RegisterEntryPoint<VFXManager>(Lifetime.Singleton);
+        }
+
+        private Transform GetVFXPoolRoot()
+        {
+            if (_vfxPoolRoot != null)
+            {
+                return _vfxPoolRoot;
+            }
+
+            var root = new GameObject("VFXPoolRoot");
+            root.transform.SetParent(transform, false);
+            _vfxPoolRoot = root.transform;
+            return _vfxPoolRoot;
         }
 
         private AudioSource GetAudioSource(ref AudioSource audioSource)
