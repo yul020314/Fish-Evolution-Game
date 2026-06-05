@@ -19,6 +19,7 @@ namespace FishEvolution.Gameplay
 
         private Vector2 _moveInput;
         private IPublisher<SkillUseRequest> _skillUsePublisher;
+        private IPublisher<PlayerMovedEvent> _playerMovedPublisher;
         private BuffManager _buffManager;
 
         public FishDataSO FishData => _fishData;
@@ -27,9 +28,11 @@ namespace FishEvolution.Gameplay
         [Inject]
         public void Construct(
             IPublisher<SkillUseRequest> skillUsePublisher,
+            IPublisher<PlayerMovedEvent> playerMovedPublisher,
             BuffManager buffManager)
         {
             _skillUsePublisher = skillUsePublisher;
+            _playerMovedPublisher = playerMovedPublisher;
             _buffManager = buffManager;
             _buffManager.RegisterPlayer(this);
         }
@@ -66,6 +69,7 @@ namespace FishEvolution.Gameplay
             _moveInput = Vector2.ClampMagnitude(inputValue.Get<Vector2>(), 1f);
             Move(_moveInput);
             RotateTo(_moveInput);
+            PublishMoved(_moveInput);
         }
 
         public void OnSkill(InputValue inputValue)
@@ -142,6 +146,18 @@ namespace FishEvolution.Gameplay
 
             var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0f, 0f, angle);
+        }
+
+        private void PublishMoved(Vector2 direction)
+        {
+            if (_playerMovedPublisher == null ||
+                direction.sqrMagnitude <= MinMoveMagnitudeSqr)
+            {
+                return;
+            }
+
+            _playerMovedPublisher.Publish(
+                new PlayerMovedEvent(this, direction));
         }
 
         private void CacheComponents()

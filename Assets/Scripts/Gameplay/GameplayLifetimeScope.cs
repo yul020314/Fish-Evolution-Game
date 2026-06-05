@@ -9,6 +9,7 @@ using FishEvolution.Quest;
 using FishEvolution.Ranking;
 using FishEvolution.Save;
 using FishEvolution.Shop;
+using FishEvolution.Tutorial;
 using FishEvolution.UI;
 using FishEvolution.VFX;
 using System;
@@ -33,6 +34,7 @@ namespace FishEvolution.Gameplay
         [UnityEngine.SerializeField] private FishDataSO[] _fishBookData = new FishDataSO[0];
         [UnityEngine.SerializeField] private ScoreSettings _scoreSettings = new ScoreSettings();
         [UnityEngine.SerializeField] private AdSettings _adSettings = new AdSettings();
+        [UnityEngine.SerializeField] private GuideStep[] _guideSteps = new GuideStep[0];
         [UnityEngine.SerializeField] private int _maxRankRecords = 20;
         [UnityEngine.SerializeField] private string _saveFileName = "player_progress.json";
         [UnityEngine.SerializeField] private float _autoSaveInterval = 10f;
@@ -74,6 +76,10 @@ namespace FishEvolution.Gameplay
             builder.RegisterMessageBroker<AdRequest>(options);
             builder.RegisterMessageBroker<AdCompletedEvent>(options);
             builder.RegisterMessageBroker<AdFailedEvent>(options);
+            builder.RegisterMessageBroker<PlayerMovedEvent>(options);
+            builder.RegisterMessageBroker<TutorialStartedEvent>(options);
+            builder.RegisterMessageBroker<TutorialStepChangedEvent>(options);
+            builder.RegisterMessageBroker<TutorialCompletedEvent>(options);
             builder.RegisterMessageBroker<EatRequest>(options);
             builder.RegisterMessageBroker<EatCompletedEvent>(options);
             builder.RegisterMessageBroker<SkillUseRequest>(options);
@@ -92,6 +98,7 @@ namespace FishEvolution.Gameplay
             builder.RegisterInstance(_fishBookData);
             builder.RegisterInstance(_scoreSettings);
             builder.RegisterInstance(_adSettings);
+            builder.RegisterInstance(_guideSteps);
             builder.RegisterInstance(Mathf.Max(1, _maxRankRecords));
             builder.Register<IAdService, MockAdService>(Lifetime.Singleton);
             builder.Register<UnlockInventory>(Lifetime.Singleton);
@@ -126,6 +133,8 @@ namespace FishEvolution.Gameplay
             builder.RegisterEntryPoint<RankSystem>(Lifetime.Singleton);
             builder.RegisterEntryPoint<AdManager>(Lifetime.Singleton);
             builder.RegisterEntryPoint<AdRewardSystem>(Lifetime.Singleton);
+            builder.RegisterEntryPoint<TutorialSystem>(Lifetime.Singleton);
+            builder.RegisterEntryPoint<HighlightUI>(Lifetime.Singleton);
             builder.RegisterEntryPoint<AutoSave>(Lifetime.Singleton);
         }
 
