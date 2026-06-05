@@ -21,3 +21,4 @@ MonoBehaviour:
   _scale: 1
   _unlockCost: 10000
   _skill: 4
+  _sprite: {fileID: 21300000, guid: 40f1bdc11b004e0784654cad0b54cb39, type: 3}

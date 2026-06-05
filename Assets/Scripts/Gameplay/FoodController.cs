@@ -59,7 +59,12 @@ namespace FishEvolution.Gameplay
 
             gameObject.name = _foodData.FoodName;
             transform.localScale = Vector3.one * _foodData.Scale;
-            _spriteRenderer.color = _foodData.Color;
+            _spriteRenderer.sprite = _foodData.Sprite != null
+                ? _foodData.Sprite
+                : _spriteRenderer.sprite;
+            _spriteRenderer.color = _foodData.Sprite != null
+                ? Color.white
+                : _foodData.Color;
         }
 
         private void CacheComponents()

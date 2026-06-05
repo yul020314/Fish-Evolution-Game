@@ -14,6 +14,7 @@ namespace FishEvolution.Config
         [SerializeField] private float _scale = 1f;
         [SerializeField] private int _unlockCost = 0;
         [SerializeField] private SkillType _skill = SkillType.None;
+        [SerializeField] private Sprite _sprite;
 
         public string FishId => _fishId;
         public string FishName => _fishName;
@@ -24,5 +25,6 @@ namespace FishEvolution.Config
         public float Scale => _scale;
         public int UnlockCost => _unlockCost;
         public SkillType Skill => _skill;
+        public Sprite Sprite => _sprite;
     }
 }

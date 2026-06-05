@@ -46,7 +46,12 @@ namespace FishEvolution.Gameplay
 
             gameObject.name = _fishData.FishName;
             transform.localScale = _baseScale * Mathf.Max(0.01f, _fishData.Scale);
-            _spriteRenderer.color = GetRarityColor(_fishData.Rarity);
+            _spriteRenderer.sprite = _fishData.Sprite != null
+                ? _fishData.Sprite
+                : _spriteRenderer.sprite;
+            _spriteRenderer.color = _fishData.Sprite != null
+                ? Color.white
+                : GetRarityColor(_fishData.Rarity);
         }
 
         private Color GetRarityColor(FishRarity rarity)

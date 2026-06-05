@@ -18,3 +18,4 @@ MonoBehaviour:
   _experience: 80
   _scale: 0.68
   _color: {r: 0.64, g: 0.42, b: 1, a: 1}
+  _sprite: {fileID: 21300000, guid: 462af9389ab641eaa6d7a0fbef180b20, type: 3}

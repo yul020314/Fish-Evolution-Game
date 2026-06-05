@@ -44,12 +44,12 @@ namespace FishEvolution.Gameplay
         protected override void Configure(IContainerBuilder builder)
         {
             var options = builder.RegisterMessagePipe();
-            builder.RegisterComponentInHierarchy<PlayerController>();
-            builder.RegisterComponentInHierarchy<PlayerGrowthController>();
-            builder.RegisterComponentInHierarchy<FishSpawner>();
-            builder.RegisterComponentInHierarchy<BossController>();
-            builder.RegisterComponentInHierarchy<MapManager>();
-            builder.RegisterComponentInHierarchy<FogSystem>();
+            RegisterSceneComponent<PlayerController>(builder);
+            RegisterSceneComponent<PlayerGrowthController>(builder);
+            RegisterSceneComponent<FishSpawner>(builder);
+            RegisterSceneComponent<BossController>(builder);
+            RegisterSceneComponent<MapManager>(builder);
+            RegisterSceneComponent<FogSystem>(builder);
             builder.RegisterMessageBroker<FoodConsumedEvent>(options);
             builder.RegisterMessageBroker<PlayerLevelUpEvent>(options);
             builder.RegisterMessageBroker<PlayerProgressChangedEvent>(options);
@@ -142,6 +142,32 @@ namespace FishEvolution.Gameplay
             builder.RegisterEntryPoint<HighlightUI>(Lifetime.Singleton);
             builder.RegisterEntryPoint<PerformanceMonitor>(Lifetime.Singleton);
             builder.RegisterEntryPoint<AutoSave>(Lifetime.Singleton);
+        }
+
+        private void RegisterSceneComponent<T>(IContainerBuilder builder)
+            where T : Component
+        {
+            var component = GetSceneComponent<T>();
+            if (component != null)
+            {
+                builder.RegisterComponent(component);
+            }
+        }
+
+        private T GetSceneComponent<T>()
+            where T : Component
+        {
+            var roots = gameObject.scene.GetRootGameObjects();
+            for (var index = 0; index < roots.Length; index++)
+            {
+                var component = roots[index].GetComponentInChildren<T>(true);
+                if (component != null)
+                {
+                    return component;
+                }
+            }
+
+            return null;
         }
 
         private void RegisterAudio(IContainerBuilder builder)

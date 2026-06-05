@@ -11,6 +11,7 @@ namespace FishEvolution.Config
         [SerializeField] private int _experience = 1;
         [SerializeField] private float _scale = 0.2f;
         [SerializeField] private Color _color = Color.white;
+        [SerializeField] private Sprite _sprite;
 
         public string FoodId => _foodId;
         public string FoodName => _foodName;
@@ -18,5 +19,6 @@ namespace FishEvolution.Config
         public int Experience => _experience;
         public float Scale => _scale;
         public Color Color => _color;
+        public Sprite Sprite => _sprite;
     }
 }
